@@ -32,3 +32,9 @@ jobs:
       - name: Build LLVM
         run: ${{ github.workspace }}/build-llvm.sh
         working-directory: ${{ vars.BASE_DIR }}
+
+      - name: Archive change logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: change logs
+          path: ${{ vars.BASE_DIR }}/CHANGELOGS
