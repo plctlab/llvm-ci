@@ -8,8 +8,8 @@ then
   last_commit=$(git rev-parse HEAD)
   git pull
   current_commit=$(git rev-parse HEAD)
-  echo "from $last_commit to $current_commit\n" > CHANGELOGS
-  git log $last_commit..HEAD --pretty=oneline >> CHANGELOGS
+  echo "from $last_commit to $current_commit\n" > ../CHANGELOGS
+  git log $last_commit..HEAD --pretty=oneline >> ../CHANGELOGS
 else
   git clone https://github.com/llvm/llvm-project
 fi
