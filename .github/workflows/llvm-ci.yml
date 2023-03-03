@@ -25,5 +25,13 @@ jobs:
           repository: llvm/llvm-test-suite
           path: llvm-test-suite 
 
+      - name: Cache llvm-build
+        id: llvm-build
+        uses: khj809/github-action-cache-local-fs@v1
+        with:
+          path: llvm-build
+          key: llvm-build
+          cache-base-path: /tmp/cache
+
       - name: Build LLVM
         run: ./build.sh
