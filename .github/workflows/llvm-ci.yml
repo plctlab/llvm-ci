@@ -22,13 +22,13 @@ jobs:
         run: mkdir -p ${{ vars.BASE_DIR }}
 
       - name: Update LLVM
-        run: ./update-llvm.sh
+        run: ${{ github.workspace }}/update-llvm.sh
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Update llvm-test-suite
-        run: ./update-llvm-test-suite.sh
+        run: ${{ github.workspace }}/update-llvm-test-suite.sh
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM
-        run: ./build-llvm.sh
+        run: ${{ github.workspace }}/build-llvm.sh
         working-directory: ${{ vars.BASE_DIR }}
