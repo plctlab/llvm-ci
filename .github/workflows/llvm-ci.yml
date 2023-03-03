@@ -14,7 +14,6 @@ concurrency:
 jobs:
   build:
     runs-on: self-hosted
-    environment: ${{ vars.RUNNER_NAME }}
 
     steps:
       - uses: actions/checkout@v3
