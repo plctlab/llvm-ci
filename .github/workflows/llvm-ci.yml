@@ -8,32 +8,28 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: "unique"
+
 jobs:
   build:
     runs-on: self-hosted
+    environment: ${{ vars.RUNNER_NAME }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - uses: actions/checkout@v3
-        with:
-          repository: llvm/llvm-project
-          path: llvm-project
-          fetch-depth: 0
-      
-      - uses: actions/checkout@v3
-        with:
-          repository: llvm/llvm-test-suite
-          path: llvm-test-suite
-          fetch-depth: 0
+      - name: Create work space
+        run: mkdir -p ${{ vars.BASE_DIR }}
 
-      - name: Cache llvm-build
-        id: llvm-build
-        uses: khj809/github-action-cache-local-fs@v1
-        with:
-          path: llvm-build
-          key: llvm-build
-          cache-base-path: /tmp/cache
+      - name: Update LLVM
+        run: ./update-llvm.sh
+        working-directory: ${{ vars.BASE_DIR }}
+
+      - name: Update llvm-test-suite
+        run: ./update-llvm-test-suite.sh
+        working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM
-        run: ./build.sh
+        run: ./build-llvm.sh
+        working-directory: ${{ vars.BASE_DIR }}
