@@ -19,11 +19,13 @@ jobs:
         with:
           repository: llvm/llvm-project
           path: llvm-project
+          fetch-depth: 0
       
       - uses: actions/checkout@v3
         with:
           repository: llvm/llvm-test-suite
-          path: llvm-test-suite 
+          path: llvm-test-suite
+          fetch-depth: 0
 
       - name: Cache llvm-build
         id: llvm-build
