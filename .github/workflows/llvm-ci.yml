@@ -57,7 +57,7 @@ jobs:
       issues: write 
 
     needs: build
-    if: github.event_name != "pull_request" && ${{needs.build.outputs.open_issue}} == "1"
+    if: (github.event_name != "pull_request") && (${{needs.build.outputs.open_issue}} == "1")
 
     steps:
       - name: Report regression
