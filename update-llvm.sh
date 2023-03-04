@@ -14,6 +14,7 @@ then
   if [ $last_commit = $current_commit ]
   then
     export UNCHANGED=1
+    echo "UNCHANGED=1" >> $GITHUB_ENV
   fi
 else
   git clone https://github.com/llvm/llvm-project
