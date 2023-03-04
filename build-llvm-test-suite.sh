@@ -35,6 +35,8 @@ then
   if [ -r result-last.json ]
   then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
+    # small diff
+    llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
   fi
   cp artifacts/result.json result-last.json
 fi
