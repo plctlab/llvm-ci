@@ -33,6 +33,10 @@ jobs:
         run: ${{ github.workspace }}/build-llvm.sh
         working-directory: ${{ vars.BASE_DIR }}
 
+      - name: Build LLVM Test Suite
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }}/target-riscv64.cmake
+        working-directory: ${{ vars.BASE_DIR }}
+
       - name: Archive change logs
         uses: dtcxzyw/upload-artifact@main
         with:
