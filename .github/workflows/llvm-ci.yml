@@ -15,8 +15,8 @@ jobs:
   build:
     runs-on: self-hosted
 
-    outputs:
-      open_issue: ${{ steps.llvm-test-suite.outputs.open_issue }}
+    permissions:
+      issues: write 
 
     steps:
       - uses: actions/checkout@v3
@@ -41,9 +41,17 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM Test Suite
-        id: llvm-test-suite
+        id: test
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         working-directory: ${{ vars.BASE_DIR }}
+
+      - name: Report regression
+        uses: JasonEtco/create-an-issue@v2
+        if: ${{steps.test.outputs.open_issue}} == "1"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: ${{ vars.BASE_DIR }}/artifacts/issue_generated.md
 
       - name: Archive artifacts
         uses: dtcxzyw/upload-artifact@main
@@ -51,19 +59,4 @@ jobs:
           name: artifacts
           path: ${{ vars.BASE_DIR }}/artifacts
 
-  open_issue:
-    runs-on: self-hosted
-    permissions:
-      issues: write 
-
-    needs: build
-    if: (github.event_name != "pull_request") && (needs.build.outputs.open_issue == "1")
-
-    steps:
-      - name: Report regression
-        uses: JasonEtco/create-an-issue@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          filename: ${{ vars.BASE_DIR }}/artifacts/issue_generated.md
     
