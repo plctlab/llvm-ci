@@ -13,6 +13,6 @@ cmake -G Ninja \
       -DCMAKE_TOOLCHAIN_FILE=$toolchain \
       -C ../llvm-test-suite/cmake/caches/CodeSize.cmake \
       -DTEST_SUITE_BENCHMARKING_ONLY=ON \
-      -DBENCHMARK_ENABLE_TESTING=OFF \
+      -DBENCHMARK_ENABLE_TESTING=ON \
       ../llvm-test-suite
 cmake --build . -j
