@@ -1,8 +1,10 @@
 #!/bin/bash
 
 repo_base=$1
+run_url=$2
 toolchain=$repo_base/target-riscv64.cmake
 update_script=$repo_base/update-binary-database.py
+diff_script=$repo_base/diff-issue-generate.py
 
 if [ $MODIFIED = 1 ] || [ ! -r result-last.json ]
 then
@@ -42,6 +44,10 @@ then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
     # small diff
     llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
+    $diff_script result-last.json artifacts/result.json $repo_base $run_url
+    echo "open_issue=$?" >> "$GITHUB_OUTPUT"
   fi
   cp artifacts/result.json result-last.json
 fi
+
+exit 0

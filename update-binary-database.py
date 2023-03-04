@@ -2,6 +2,7 @@
 import sys
 import shutil
 import hashlib
+import pathlib
 import os
 
 src = sys.argv[1]
@@ -20,4 +21,6 @@ for r, ds, fs in os.walk(src):
                 print("new binary", path, '->', dst_path)
                 shutil.copyfile(path, dst_path)
                 cnt += 1
+            else:
+                pathlib.Path.touch(path)
 print(cnt, "file(s) updated")
