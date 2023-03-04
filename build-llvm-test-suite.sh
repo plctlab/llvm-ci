@@ -44,7 +44,7 @@ then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
     # small diff
     llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
-    $diff_script result-last.json artifacts/result.json $repo_base $run_url
+    $diff_script result-last.json artifacts/result.json . $run_url
   fi
   cp artifacts/result.json result-last.json
 fi

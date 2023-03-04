@@ -45,7 +45,7 @@ jobs:
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         working-directory: ${{ vars.BASE_DIR }}
 
-      - name: Report regression
+      - name: Report
         uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,7 +53,7 @@ jobs:
           filename: ${{ vars.BASE_DIR }}/artifacts/issue_generated.md
           update_existing: true
         id: create-issue
-        
+
       - run: |
           echo 'Created issue number ${{ steps.create-issue.outputs.number }}'
           echo 'Created ${{ steps.create-issue.outputs.url }}'
