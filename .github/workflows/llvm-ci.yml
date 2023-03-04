@@ -34,7 +34,7 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Archive change logs
-        uses: dtcxzyw/upload-artifact@v3
+        uses: dtcxzyw/upload-artifact@main
         with:
           name: change logs
           path: ${{ vars.BASE_DIR }}/CHANGELOGS
