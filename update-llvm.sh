@@ -8,9 +8,9 @@ then
   last_commit=$(git rev-parse HEAD)
   git pull
   current_commit=$(git rev-parse HEAD)
-  echo -e "from $last_commit to $current_commit\n" > ../CHANGELOGS
-  git log $last_commit..HEAD --pretty=oneline >> ../CHANGELOGS
-  cat ../CHANGELOGS
+  echo -e "from $last_commit to $current_commit\n" > ../artifacts/CHANGELOGS
+  git log $last_commit..HEAD --pretty=oneline >> ../artifacts/CHANGELOGS
+  cat ../artifacts/CHANGELOGS
   if [ $last_commit = $current_commit ]
   then
     export UNCHANGED=1

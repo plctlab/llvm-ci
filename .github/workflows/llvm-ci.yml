@@ -19,7 +19,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Create work space
-        run: mkdir -p ${{ vars.BASE_DIR }}
+        run: | 
+          mkdir -p ${{ vars.BASE_DIR }}
+          mkdir -p ${{ vars.BASE_DIR }}/artifacts
+          rm -rf ${{ vars.BASE_DIR }}/artifacts/*
 
       - name: Update LLVM
         run: ${{ github.workspace }}/update-llvm.sh
@@ -37,8 +40,8 @@ jobs:
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }}/target-riscv64.cmake
         working-directory: ${{ vars.BASE_DIR }}
 
-      - name: Archive change logs
+      - name: Archive artifacts
         uses: dtcxzyw/upload-artifact@main
         with:
-          name: change logs
-          path: ${{ vars.BASE_DIR }}/CHANGELOGS
+          name: artifacts
+          path: ${{ vars.BASE_DIR }}/artifacts
