@@ -48,3 +48,8 @@ then
   fi
   cp artifacts/result.json result-last.json
 fi
+
+if [ -r artifacts/issue_generated.md ]
+then
+  cp artifacts/issue_generated.md $repo_base/issue.md
+fi
