@@ -24,7 +24,7 @@ then
         -DTEST_SUITE_RUN_BENCHMARKS=OFF \
         ../llvm-test-suite
   cmake --build . -j
-  ../llvm-build/llvm-lit -j1 -o ../artifacts/result.json .
+  ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
   cd ..
 else
   cp result-last.json artifacts/result.json
@@ -32,6 +32,9 @@ fi
 
 if [ -r artifacts/result.json ]
 then
-  llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
+  if [ -r result-last.json ]
+  then
+    llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
+  fi
   cp artifacts/result.json result-last.json
 fi
