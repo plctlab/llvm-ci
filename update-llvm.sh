@@ -11,6 +11,10 @@ then
   echo -e "from $last_commit to $current_commit\n" > ../CHANGELOGS
   git log $last_commit..HEAD --pretty=oneline >> ../CHANGELOGS
   cat ../CHANGELOGS
+  if [ $last_commit = $current_commit ]
+  then
+    export UNCHANGED=1
+  fi
 else
   git clone https://github.com/llvm/llvm-project
 fi
