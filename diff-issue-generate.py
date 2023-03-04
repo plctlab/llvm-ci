@@ -71,7 +71,7 @@ issue_report_path = base_dir+"/artifacts/issue_generated.md"
 if len(binary_bloating_list) == 0:
     with open(issue_report_path, "w") as issue_report:
         issue_report.write('---\n')
-        issue_report.write("Nightly build Report\n")
+        issue_report.write("title: Nightly Build Summary\n")
         issue_report.write('---\n')
         issue_report.write('## Metadata\n')
         issue_report.write('+ workflow url: {}\n'.format(workflow_url))
@@ -108,7 +108,7 @@ else:
     with open(issue_report_path, "w") as issue_report:
         issue_report.write('---\n')
         issue_report.write(
-            "Size Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
+            "title: Size Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
         issue_report.write('labels: regression\n')
         issue_report.write('---\n')
         issue_report.write('## Metadata\n')
