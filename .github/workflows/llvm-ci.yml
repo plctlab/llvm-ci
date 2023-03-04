@@ -60,6 +60,8 @@ jobs:
     if: (github.event_name != "pull_request") && (${{needs.build.outputs.open_issue}} == "1")
 
     steps:
+      - name: debug
+        run: echo ${{needs.build.outputs.open_issue}}
       - name: Report regression
         uses: JasonEtco/create-an-issue@v2
         env:
