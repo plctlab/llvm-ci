@@ -4,7 +4,7 @@ repo_base=$1
 toolchain=$repo_base/target-riscv64.cmake
 update_script=$repo_base/update-binary-database.py
 
-if [ -z UNCHANGED ] || [ ! -r result-last.json ]
+if [ $MODIFIED = 1 ] || [ ! -r result-last.json ]
 then
   if [ -d llvm-test-suite-build-tmp ]
   then
@@ -31,6 +31,7 @@ then
   ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
   cd ..
 else
+  echo "Skip llvm-test-suite tests"
   cp result-last.json artifacts/result.json
 fi
 

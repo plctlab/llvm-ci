@@ -6,7 +6,7 @@ cmake ../llvm-project/llvm -DCMAKE_BUILD_TYPE=Release -G Ninja \
         -DLLVM_ENABLE_PROJECTS="clang;lld" \
         -DLLVM_TARGETS_TO_BUILD="X86;RISCV" 
 cmake --build . -j
-if [ -z UNCHANGED ]
+if [ $MODIFIED = 1 ]
 then
   cmake --build . -j -t check-all
 else

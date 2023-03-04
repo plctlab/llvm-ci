@@ -13,8 +13,13 @@ then
   cat ../artifacts/CHANGELOGS
   if [ $last_commit = $current_commit ]
   then
-    export UNCHANGED=1
-    echo "UNCHANGED=1" >> $GITHUB_ENV
+    echo "No changes"
+    export MODIFIED=0
+    echo "MODIFIED=0" >> $GITHUB_ENV
+  else
+    echo "Modified"
+    export MODIFIED=1
+    echo "MODIFIED=1" >> $GITHUB_ENV
   fi
 else
   git clone https://github.com/llvm/llvm-project
