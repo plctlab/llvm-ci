@@ -9,3 +9,5 @@ then
 else
   git clone https://github.com/llvm/llvm-test-suite
 fi
+
+git apply $1

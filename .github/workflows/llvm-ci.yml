@@ -29,7 +29,7 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Update llvm-test-suite
-        run: ${{ github.workspace }}/update-llvm-test-suite.sh
+        run: ${{ github.workspace }}/update-llvm-test-suite.sh ${{ github.workspace }}/llvm-test-suite.patch
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM
