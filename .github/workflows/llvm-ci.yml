@@ -44,10 +44,13 @@ jobs:
         id: test
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         working-directory: ${{ vars.BASE_DIR }}
+        
+      - name: debug
+        run: echo ${{steps.test.outputs.open_issue}}
 
       - name: Report regression
         uses: JasonEtco/create-an-issue@v2
-        if: ${{steps.test.outputs.open_issue}} == "1"
+        if: ${{steps.test.outputs.open_issue}} == 1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
