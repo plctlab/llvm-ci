@@ -21,6 +21,7 @@ jobs:
       - name: Create work space
         run: | 
           mkdir -p ${{ vars.BASE_DIR }}
+          mkdir -p ${{ vars.BASE_DIR }}/binaries
           mkdir -p ${{ vars.BASE_DIR }}/artifacts
           rm -rf ${{ vars.BASE_DIR }}/artifacts/*
 
@@ -37,7 +38,7 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM Test Suite
-        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }}/target-riscv64.cmake
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }}
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Archive artifacts

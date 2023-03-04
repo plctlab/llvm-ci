@@ -1,6 +1,8 @@
 #!/bin/bash
 
-toolchain=$1
+repo_base=$1
+toolchain=$repo_base/target-riscv64.cmake
+update_script=$repo_base/update-binary-database.py
 
 if [ -z UNCHANGED ] || [ ! -r result-last.json ]
 then
@@ -22,8 +24,10 @@ then
         -DTEST_SUITE_BENCHMARKING_ONLY=ON \
         -DBENCHMARK_ENABLE_TESTING=ON \
         -DTEST_SUITE_RUN_BENCHMARKS=OFF \
+        -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
   cmake --build . -j
+  $update_script . ../binaries
   ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
   cd ..
 else
