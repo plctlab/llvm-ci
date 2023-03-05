@@ -11,8 +11,8 @@ rhs = sys.argv[2]
 base_dir = sys.argv[3]
 workflow_url = sys.argv[4]
 
-threshold_abs = 1024
-threshold_rel = 1.05
+threshold_abs = 16
+threshold_rel = 1.001
 
 
 def parse(path):
