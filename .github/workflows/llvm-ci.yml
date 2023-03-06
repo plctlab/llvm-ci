@@ -46,7 +46,7 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
         
       - name: Dump steps context
-        if: steps.test.outputs.SHOULD_OPEN_ISSUE == "1"
+        if: steps.test.outputs.SHOULD_OPEN_ISSUE == '1'
         env:
           STEPS_CONTEXT: ${{ toJson(steps) }}
         run: echo "$STEPS_CONTEXT"
