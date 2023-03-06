@@ -44,19 +44,24 @@ jobs:
         id: test
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         working-directory: ${{ vars.BASE_DIR }}
-
-      - name: Report
-        uses: JasonEtco/create-an-issue@v2
+        
+      - name: Dump steps context
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          filename: issue.md
-          update_existing: true
-        id: create-issue
+          STEPS_CONTEXT: ${{ toJson(steps) }}
+        run: echo "$STEPS_CONTEXT"
 
-      - run: |
-          echo 'Created issue number ${{ steps.create-issue.outputs.number }}'
-          echo 'Created ${{ steps.create-issue.outputs.url }}'
+      #- name: Report
+      #  uses: JasonEtco/create-an-issue@v2
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #  with:
+      #    filename: issue.md
+      #    update_existing: true
+      #  id: create-issue
+
+      #- run: |
+      #    echo 'Created issue number ${{ steps.create-issue.outputs.number }}'
+      #    echo 'Created ${{ steps.create-issue.outputs.url }}'
 
       - name: Archive artifacts
         uses: dtcxzyw/upload-artifact@main
