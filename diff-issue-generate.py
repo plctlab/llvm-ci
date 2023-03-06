@@ -103,6 +103,7 @@ if len(binary_bloating_list) == 0:
                 strip_name(name), lhs_size, rhs_size, rhs_size/lhs_size))
 
     print("No regressions")
+    exit(0)
 
 else:
     with open(issue_report_path, "w") as issue_report:
@@ -133,3 +134,5 @@ else:
                                                                   rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
             copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
             copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+
+    exit(1)

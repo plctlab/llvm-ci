@@ -54,3 +54,5 @@ if [ -r artifacts/issue_generated.md ]
 then
   cp artifacts/issue_generated.md $repo_base/issue.md
 fi
+
+exit 0
