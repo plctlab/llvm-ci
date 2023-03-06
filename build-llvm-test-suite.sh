@@ -45,6 +45,7 @@ then
     # small diff
     llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
     $diff_script result-last.json artifacts/result.json . $run_url
+    echo "SHOULD_OPEN_ISSUE=$?" >> $GITHUB_OUTPUT
   fi
   cp artifacts/result.json result-last.json
 fi
