@@ -17,7 +17,7 @@ then
   # For LTO: -mllvm -lto-embed-bitcode=optimized
   embed_bitcode="-fembed-bitcode "
   reproducible_build="-Qn -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= "
-  flags="-fuse-ld=lld -mcpu=sifive-u74 $embed_bitcode $reproducible_build"
+  flags="-fuse-ld=lld -mcpu=sifive-u74 $embed_bitcode $reproducible_build $PATCH_ADDITIONAL_FLAGS"
   export CLANG_PATH=$PWD/../llvm-build/bin
   cmake -G Ninja \
         -DCMAKE_C_FLAGS="$flags" \
@@ -32,7 +32,10 @@ then
         ../llvm-test-suite
   cmake --build . -j
   ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
-  $update_script . ../binaries
+  if [ -z $PRE_COMMIT_MODE ]
+  then
+    $update_script . ../binaries
+  fi
   cd ..
 else
   echo "Skip llvm-test-suite tests"
@@ -48,13 +51,26 @@ then
     llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
     $diff_script result-last.json artifacts/result.json . $run_url
     echo "SHOULD_OPEN_ISSUE=$?" >> $GITHUB_OUTPUT
+    if [ -d artifacts/binaries ]
+    then
+      tar -czf artifacts/binaries.tar.gz artifacts/binaries
+      rm -rf artifacts/binaries
+    fi
   fi
-  cp artifacts/result.json result-last.json
+  if [ -z $PRE_COMMIT_MODE ]
+  then
+    cp artifacts/result.json result-last.json
+  fi
 fi
 
 if [ -r artifacts/issue_generated.md ]
 then
   cp artifacts/issue_generated.md $repo_base/issue.md
+fi
+
+if [ -r artifacts/pr-commit_generated.md ]
+then
+  cp artifacts/pr-commit_generated.md $repo_base/pr-commit.md
 fi
 
 exit 0
