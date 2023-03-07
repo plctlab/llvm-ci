@@ -31,6 +31,10 @@ jobs:
       - name: Update LLVM
         run: ${{ github.workspace }}/update-llvm.sh
         working-directory: ${{ vars.BASE_DIR }}
+        
+      - name: Check force-rebuild flag
+        if: github.event_name != "schedule"
+        run: echo "FORCE_REBUILD=1" >> $GITHUB_ENV
 
       - name: Update llvm-test-suite
         run: ${{ github.workspace }}/update-llvm-test-suite.sh ${{ github.workspace }}/llvm-test-suite.patch
