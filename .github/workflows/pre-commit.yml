@@ -1,0 +1,33 @@
+name: Pre-Commit CI
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+concurrency:
+  group: "unique"
+
+jobs:
+  build:
+    runs-on: self-hosted
+    if: github.event.review.state == 'approved'
+
+    steps:
+      - uses: dtcxzyw/checkout@main
+
+      - name: Create work space
+        run: ./setup-work-space.sh ${{ vars.BASE_DIR }}
+
+      - name: Setup patch
+        run: ${{ github.workspace }}/apply-pre-commit-patch.sh
+        working-directory: ${{ vars.BASE_DIR }}
+
+      - name: Build LLVM
+        run: ${{ github.workspace }}/build-llvm.sh
+        working-directory: ${{ vars.BASE_DIR }}
+
+      - name: Build LLVM Test Suite
+        id: test
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        working-directory: ${{ vars.BASE_DIR }}
+        
