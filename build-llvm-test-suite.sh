@@ -31,7 +31,7 @@ then
         -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
   cmake --build . -j
-  ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
+  ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json . > /dev/null
   if [ -z $PRE_COMMIT_MODE ]
   then
     $update_script . ../binaries
