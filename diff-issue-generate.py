@@ -77,7 +77,7 @@ def dump_diff(report, lhs_data, rhs_data, copy_binaries):
     if len(diff_list) > limit:
         diff_list = diff_list[:limit]
     for name, lhs_hash, rhs_hash, lhs_size, rhs_size in diff_list:
-        issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
+        report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
             strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
         if copy_binaries:
             copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
