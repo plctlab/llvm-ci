@@ -29,7 +29,7 @@ then
         -DTEST_SUITE_RUN_BENCHMARKS=OFF \
         -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
-  cmake --build . -j
+  cmake --build . -j --verbose
   ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
   $update_script . ../binaries
   cd ..
