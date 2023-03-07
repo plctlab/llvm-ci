@@ -18,7 +18,7 @@ for r, ds, fs in os.walk(src):
                 dst_path = dst + "/" + \
                     str(hashlib.md5(file.read()).hexdigest())
             if not os.path.exists(dst_path):
-                print("new binary", path, '->', dst_path)
+                print("new binary", path.removesuffix(".stripped"), '->', dst_path)
                 shutil.copyfile(path, dst_path)
                 cnt += 1
             else:
