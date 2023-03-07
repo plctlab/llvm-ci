@@ -10,8 +10,10 @@ git -C ./llvm-project clean -fdx
 
 $repo_base/setup-pre-commit-patch.sh
 rm -f patch
-wget https://reviews.llvm.org/$PATCH_ID?download=true -O patch
-git -C ./llvm-project apply patch
+PATCH_URL=https://reviews.llvm.org/$PATCH_ID?download=true
+echo "Downloading patch $PATCH_URL..."
+wget $PATCH_URL -O patch
+git -C ./llvm-project apply $PWD/patch
 echo "PATCH_SHA256=$(sha256sum patch)" >> $GITHUB_ENV
 echo "PATCH_ADDITIONAL_FLAGS=$PATCH_ADDITIONAL_FLAGS" >> $GITHUB_ENV
 echo "PRE_COMMIT_MODE=1" >> $GITHUB_ENV
