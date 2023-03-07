@@ -15,14 +15,11 @@ then
   then
     echo "No changes"
     export MODIFIED=0
-    echo "MODIFIED=0" >> $GITHUB_ENV
   else
     echo "Modified"
     export MODIFIED=1
-    echo "MODIFIED=1" >> $GITHUB_ENV
   fi
+  echo "MODIFIED=$MODIFIED" >> $GITHUB_ENV
 else
   git clone https://github.com/llvm/llvm-project
 fi
-
-# TODO: apply patches
