@@ -1,37 +1,40 @@
 name: Pre-Commit CI
 
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+    types: [opened, reopened]
+  #issue_comment:
+  #  types: [opened]
 
 concurrency:
   group: "unique"
-  
-env:
-  BASE_DIR: /home/dtcxzyw/llvm-ci/
+  cancel-in-progress: false
 
 jobs:
   build:
+    #if: github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request)
     runs-on: self-hosted
-    if: github.event.review.state == 'approved'
+    permissions:
+      issues: write 
+      pull-requests: write
 
     steps:
       - uses: dtcxzyw/checkout@main
 
       - name: Create work space
-        run: ./setup-work-space.sh ${{ env.BASE_DIR }}
+        run: ${{ github.workspace }}/setup-work-space.sh ${{ vars.BASE_DIR }}
 
       - name: Setup patch
-        run: ${{ github.workspace }}/apply-pre-commit-patch.sh
-        working-directory: ${{ env.BASE_DIR }}
+        run: ${{ github.workspace }}/apply-pre-commit-patch.sh ${{ github.workspace }}
+        working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM
         run: ${{ github.workspace }}/build-llvm.sh
-        working-directory: ${{ env.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM Test Suite
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        working-directory: ${{ env.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}
 
       - name: Report
         uses: thollander/actions-comment-pull-request@v2
@@ -42,4 +45,4 @@ jobs:
         uses: dtcxzyw/upload-artifact@main
         with:
           name: artifacts
-          path: ${{ env.BASE_DIR }}/artifacts
+          path: ${{ vars.BASE_DIR }}/artifacts
