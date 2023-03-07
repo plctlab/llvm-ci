@@ -16,7 +16,7 @@ then
   cd llvm-test-suite-build-tmp
   # For LTO: -mllvm -lto-embed-bitcode=optimized
   embed_bitcode="-fembed-bitcode "
-  reproducible_build="-Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= "
+  reproducible_build="-Qn -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= "
   flags="-fuse-ld=lld -mcpu=sifive-u74 $embed_bitcode $reproducible_build"
   export CLANG_PATH=$PWD/../llvm-build/bin
   cmake -G Ninja \
