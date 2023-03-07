@@ -12,7 +12,6 @@ cnt = 0
 for r, ds, fs in os.walk(src):
     for f in fs:
         path = r + '/' + f
-        print(path)
         if os.access(path, os.X_OK) and f.endswith(".stripped"):
             dst_path = None
             with open(path, "rb") as file:
