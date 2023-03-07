@@ -29,8 +29,8 @@ then
         -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
   cmake --build . -j
-  $update_script . ../binaries
   ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json .
+  $update_script . ../binaries
   cd ..
 else
   echo "Skip llvm-test-suite tests"
