@@ -6,7 +6,7 @@ toolchain=$repo_base/target-riscv64.cmake
 update_script=$repo_base/update-binary-database.py
 diff_script=$repo_base/diff-issue-generate.py
 
-if [ $MODIFIED = 1 ] || [ ! -r result-last.json ] || [ $FORCE_REBUILD = 1 ]
+if [ $MODIFIED = 1 ] || [ ! -r result-last.json ] || [ ! -z $FORCE_REBUILD ]
 then
   if [ -d llvm-test-suite-build-tmp ]
   then
