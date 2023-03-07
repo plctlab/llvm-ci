@@ -7,7 +7,7 @@ index 04a27439..e760489b 100644
                                   '--remove-section=.comment',
                                   "--remove-section='.note*'",
 +                                 '--remove-section=.llvmcmd',
-+                                 '--keep-secion=.llvmbc',
++                                 '--keep-section=.llvmbc',
                                   '-o', stripped_executable,
                                   executable])
              executable = stripped_executable
