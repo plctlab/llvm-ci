@@ -6,6 +6,9 @@ on:
 
 concurrency:
   group: "unique"
+  
+env:
+  BASE_DIR: /home/dtcxzyw/llvm-ci/
 
 jobs:
   build:
@@ -16,19 +19,19 @@ jobs:
       - uses: dtcxzyw/checkout@main
 
       - name: Create work space
-        run: ./setup-work-space.sh ${{ vars.BASE_DIR }}
+        run: ./setup-work-space.sh ${{ env.BASE_DIR }}
 
       - name: Setup patch
         run: ${{ github.workspace }}/apply-pre-commit-patch.sh
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ env.BASE_DIR }}
 
       - name: Build LLVM
         run: ${{ github.workspace }}/build-llvm.sh
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ env.BASE_DIR }}
 
       - name: Build LLVM Test Suite
         run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ env.BASE_DIR }}
 
       - name: Report
         uses: thollander/actions-comment-pull-request@v2
@@ -39,4 +42,4 @@ jobs:
         uses: dtcxzyw/upload-artifact@main
         with:
           name: artifacts
-          path: ${{ vars.BASE_DIR }}/artifacts
+          path: ${{ env.BASE_DIR }}/artifacts
