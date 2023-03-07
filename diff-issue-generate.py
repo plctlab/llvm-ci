@@ -13,6 +13,7 @@ workflow_url = sys.argv[4]
 
 threshold_abs = 16
 threshold_rel = 1.001
+limit = 20
 
 
 def parse(path):
@@ -95,6 +96,8 @@ else:
         os.makedirs(binaries_dst)
 
         binary_bloating_list.sort(key=lambda x: x[4]/x[3], reverse=True)
+        if len(binary_bloating_list) > limit:
+            binary_bloating_list = binary_bloating_list[:limit]
 
         for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
             issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(strip_name(name), lhs_hash,
@@ -118,6 +121,8 @@ else:
                         (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
 
         diff_list.sort(key=lambda x: x[4]/x[3], reverse=True)
+        if len(diff_list) > limit:
+            binary_bloating_list = diff_list[:limit]
         for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
             issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
                 strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
