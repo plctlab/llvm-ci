@@ -88,7 +88,7 @@ lhs_data = parse(lhs)
 rhs_data = parse(rhs)
 
 if 'PRE_COMMIT_MODE' in os.environ:
-    pr_comment_path = base_dir+"/artifacts/pr-commit_generated.md"
+    pr_comment_path = base_dir+"/artifacts/pr-comment_generated.md"
     with open(pr_comment_path, "w") as pr_comment:
         pr_comment.write('## Metadata\n')
         pr_comment.write('+ workflow url: {}\n'.format(workflow_url))
