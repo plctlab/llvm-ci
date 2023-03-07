@@ -1,16 +1,3 @@
-diff --git a/litsupport/modules/hash.py b/litsupport/modules/hash.py
-index 04a27439..e760489b 100644
---- a/litsupport/modules/hash.py
-+++ b/litsupport/modules/hash.py
-@@ -16,6 +16,8 @@ def compute(context):
-             testplan.check_call([context.config.strip_tool,
-                                  '--remove-section=.comment',
-                                  "--remove-section='.note*'",
-+                                 '--remove-section=.llvmcmd',
-+                                 '--keep-section=.llvmbc',
-                                  '-o', stripped_executable,
-                                  executable])
-             executable = stripped_executable
 diff --git a/utils/compare.py b/utils/compare.py
 index ff294f82..c38717f8 100755
 --- a/utils/compare.py
