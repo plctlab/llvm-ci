@@ -22,5 +22,5 @@ for r, ds, fs in os.walk(src):
                 shutil.copyfile(path, dst_path)
                 cnt += 1
             else:
-                pathlib.Path.touch(path)
+                pathlib.Path(dst_path).touch()
 print(cnt, "file(s) updated")
