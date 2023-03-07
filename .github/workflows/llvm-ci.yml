@@ -27,6 +27,7 @@ jobs:
           mkdir -p ${{ vars.BASE_DIR }}/binaries
           mkdir -p ${{ vars.BASE_DIR }}/artifacts
           rm -rf ${{ vars.BASE_DIR }}/artifacts/*
+          echo "PYTHONPYCACHEPREFIX=${{ vars.BASE_DIR }}/__pycache__/" >> $GITHUB_ENV
 
       - name: Update LLVM
         run: ${{ github.workspace }}/update-llvm.sh
