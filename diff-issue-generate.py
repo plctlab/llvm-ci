@@ -87,9 +87,6 @@ def dump_diff(report, lhs_data, rhs_data, copy_binaries):
 lhs_data = parse(lhs)
 rhs_data = parse(rhs)
 
-binary_bloating_list = []
-change_logs_path = base_dir+"/artifacts/CHANGELOGS"
-
 if 'PRE_COMMIT_MODE' in os.environ:
     pr_comment_path = base_dir+"/artifacts/pr-commit_generated.md"
     with open(pr_comment_path, "w") as pr_comment:
@@ -102,10 +99,9 @@ if 'PRE_COMMIT_MODE' in os.environ:
         pr_comment.write(
             '+ Patch SHA256: {}\n'.format(os.environ['PATCH_SHA256']))
 
-        dump_pretty_change_logs(pr_comment, change_logs_path)
         dump_diff(pr_comment, lhs_data, rhs_data, True)
-
 else:
+    binary_bloating_list = []
     for name in lhs_data.keys():
         if name in rhs_data:
             lhs_hash, lhs_value = lhs_data[name]
@@ -115,13 +111,13 @@ else:
                 binary_bloating_list.append(
                     (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
 
-    issue_report_path = base_dir+"/artifacts/issue_generated.md"
-
     if len(binary_bloating_list) == 0:
         print("No regressions")
         exit(0)
 
     else:
+        change_logs_path = base_dir+"/artifacts/CHANGELOGS"
+        issue_report_path = base_dir+"/artifacts/issue_generated.md"
         with open(issue_report_path, "w") as issue_report:
             issue_report.write('---\n')
             issue_report.write(
