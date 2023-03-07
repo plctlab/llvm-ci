@@ -18,8 +18,9 @@ for r, ds, fs in os.walk(src):
                 dst_path = dst + "/" + \
                     str(hashlib.md5(file.read()).hexdigest())
             if not os.path.exists(dst_path):
-                print("new binary", path.removesuffix(".stripped"), '->', dst_path)
-                shutil.copyfile(path, dst_path)
+                bin_full = path.removesuffix(".stripped")
+                print("new binary", bin_full, '->', dst_path)
+                shutil.copyfile(bin_full, dst_path)
                 cnt += 1
             else:
                 pathlib.Path(dst_path).touch()
