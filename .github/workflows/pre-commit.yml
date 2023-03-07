@@ -20,7 +20,7 @@ jobs:
         run: ./setup-work-space.sh ${{ vars.BASE_DIR }}
 
       - name: Setup patch
-        run: ${{ github.workspace }}/apply-pre-commit-patch.sh
+        run: ${{ github.workspace }}/apply-pre-commit-patch.sh ${{ github.workspace }}
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM

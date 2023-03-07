@@ -1,12 +1,14 @@
 #!/bin/bash
 
+repo_base=$1
+
 echo "LLVM_REVISION=$(git -C ./llvm-project rev-parse HEAD)" >> $GITHUB_ENV
 echo "LLVM_NTS_REVISION=$(git -C ./llvm-test-suite rev-parse HEAD)" >> $GITHUB_ENV
 
 git -C ./llvm-project checkout .
 git -C ./llvm-project clean -fdx
 
-./setup-pre-commit-patch.sh
+$repo_base/setup-pre-commit-patch.sh
 rm -f patch
 wget https://reviews.llvm.org/$PATCH_ID?download=true -O patch
 git -C ./llvm-project apply patch
