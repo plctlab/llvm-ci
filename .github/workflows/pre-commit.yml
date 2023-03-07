@@ -1,31 +1,25 @@
 name: Pre-Commit CI
 
 on:
-  pull_request:
-    types: [opened, reopened]
-  #issue_comment:
-  #  types: [opened]
+  pull_request_review:
+    types: [submitted]
 
 concurrency:
   group: "unique"
-  cancel-in-progress: false
 
 jobs:
   build:
-    #if: github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request)
     runs-on: self-hosted
-    permissions:
-      issues: write 
-      pull-requests: write
+    if: github.event.review.state == 'approved'
 
     steps:
       - uses: dtcxzyw/checkout@main
 
       - name: Create work space
-        run: ${{ github.workspace }}/setup-work-space.sh ${{ vars.BASE_DIR }}
+        run: ./setup-work-space.sh ${{ vars.BASE_DIR }}
 
       - name: Setup patch
-        run: ${{ github.workspace }}/apply-pre-commit-patch.sh ${{ github.workspace }}
+        run: ${{ github.workspace }}/apply-pre-commit-patch.sh
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Build LLVM
