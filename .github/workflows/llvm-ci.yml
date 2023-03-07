@@ -33,7 +33,7 @@ jobs:
         working-directory: ${{ vars.BASE_DIR }}
         
       - name: Check force-rebuild flag
-        if: github.event_name != "schedule"
+        if: github.event_name != 'schedule'
         run: echo "FORCE_REBUILD=1" >> $GITHUB_ENV
 
       - name: Update llvm-test-suite
