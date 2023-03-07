@@ -1,6 +1,8 @@
 name: Pre-Commit CI
 
 on:
+  pull_request:
+    types: [opened, reopened]
   pull_request_review:
     types: [submitted]
 
@@ -10,7 +12,6 @@ concurrency:
 jobs:
   build:
     runs-on: self-hosted
-    if: github.event.review.state == 'approved'
 
     steps:
       - uses: dtcxzyw/checkout@main
