@@ -7,7 +7,7 @@ index 04a27439..e760489b 100644
                                   '--remove-section=.comment',
                                   "--remove-section='.note*'",
 +                                 '--remove-section=.llvmcmd',
-+                                 '--keep-section=.llvmbc',
++                                 '--keep-secion=.llvmbc',
                                   '-o', stripped_executable,
                                   executable])
              executable = stripped_executable
@@ -24,3 +24,4 @@ index ff294f82..c38717f8 100755
 +
      for metric in data.columns.levels[0]:
          data = add_diff_column(metric, data, absolute_diff=config.absolute_diff)
+ 
