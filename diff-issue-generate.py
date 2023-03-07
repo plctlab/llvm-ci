@@ -69,39 +69,6 @@ change_logs_path = base_dir+"/artifacts/CHANGELOGS"
 issue_report_path = base_dir+"/artifacts/issue_generated.md"
 
 if len(binary_bloating_list) == 0:
-    with open(issue_report_path, "w") as issue_report:
-        issue_report.write('---\n')
-        issue_report.write("title: Nightly Build Summary\n")
-        issue_report.write('---\n')
-        issue_report.write('## Metadata\n')
-        issue_report.write('+ workflow url: {}\n'.format(workflow_url))
-        current = datetime.datetime.now()
-        issue_report.write(
-            '+ timestamp: {}\n'.format(current.strftime("%Y-%m-%d %H:%M:%S")))
-        issue_report.write('## Change Logs\n')
-
-        dump_pretty_change_logs(issue_report, change_logs_path)
-
-        issue_report.write('## Differences\n')
-        issue_report.write(
-            '|Name|Baseline Size|Current Size|Ratio|\n')
-        issue_report.write('|:--|--:|--:|--:|\n')
-
-        diff_list = []
-        for name in lhs_data.keys():
-            if name in rhs_data:
-                lhs_hash, lhs_value = lhs_data[name]
-                rhs_hash, rhs_value = rhs_data[name]
-
-                if lhs_value != rhs_value:
-                    diff_list.append(
-                        (name, lhs_value, rhs_value))
-
-        diff_list.sort(key=lambda x: x[2]/x[1], reverse=True)
-        for name, lhs_size, rhs_size in binary_bloating_list:
-            issue_report.write("|{}|{}|{}|{:.3f}|\n".format(
-                strip_name(name), lhs_size, rhs_size, rhs_size/lhs_size))
-
     print("No regressions")
     exit(0)
 
@@ -134,5 +101,25 @@ else:
                                                                   rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
             copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
             copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+            
+        issue_report.write('## Differences\n')
+        issue_report.write(
+            '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
+        issue_report.write('|:--|:--:|:--:|--:|--:|--:|\n')
+
+        diff_list = []
+        for name in lhs_data.keys():
+            if name in rhs_data:
+                lhs_hash, lhs_value = lhs_data[name]
+                rhs_hash, rhs_value = rhs_data[name]
+
+                if lhs_value != rhs_value:
+                    diff_list.append(
+                        (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
+
+        diff_list.sort(key=lambda x: x[4]/x[3], reverse=True)
+        for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
+            issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
+                strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
 
     exit(1)
