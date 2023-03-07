@@ -3,8 +3,8 @@ name: Pre-Commit CI
 on:
   pull_request:
     types: [opened, reopened]
-  issue_comment:
-    types: [opened]
+  #issue_comment:
+  #  types: [opened]
 
 concurrency:
   group: "unique"
@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request)
+    #if: github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && github.event.issue.pull_request)
     runs-on: self-hosted
 
     steps:
