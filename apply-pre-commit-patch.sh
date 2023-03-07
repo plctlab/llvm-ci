@@ -10,7 +10,7 @@ echo "LLVM_NTS_REVISION=$(git -C ./llvm-test-suite rev-parse HEAD)" >> $GITHUB_E
 git -C ./llvm-project checkout .
 git -C ./llvm-project clean -fdx
 
-$repo_base/setup-pre-commit-patch.sh
+source $repo_base/setup-pre-commit-patch.sh
 rm -f patch
 PATCH_URL=https://reviews.llvm.org/$PATCH_ID?download=true
 echo "Downloading patch $PATCH_URL..."
