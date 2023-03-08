@@ -24,7 +24,7 @@ then
         -DCMAKE_CXX_FLAGS="$flags" \
         -DOPTFLAGS="$flags" \
         -DCMAKE_TOOLCHAIN_FILE=$toolchain \
-        -C ../llvm-test-suite/cmake/caches/CodeSize.cmake \
+        -C ../llvm-test-suite/cmake/caches/ReleaseThinLTO.cmake \
         -DTEST_SUITE_BENCHMARKING_ONLY=ON \
         -DBENCHMARK_ENABLE_TESTING=ON \
         -DTEST_SUITE_RUN_BENCHMARKS=OFF \
