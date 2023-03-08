@@ -5,6 +5,7 @@ import os
 import shutil
 import html
 import datetime
+import statistics
 
 lhs = sys.argv[1]
 rhs = sys.argv[2]
@@ -64,24 +65,39 @@ def dump_diff(report, lhs_data, rhs_data, copy_binaries):
     report.write('|:--|:--:|:--:|--:|--:|--:|\n')
 
     diff_list = []
+    lhs_list = []
+    rhs_list = []
     for name in lhs_data.keys():
         if name in rhs_data:
             lhs_hash, lhs_value = lhs_data[name]
             rhs_hash, rhs_value = rhs_data[name]
 
             if lhs_hash != rhs_hash:
+                if lhs_value != rhs_value:
+                    lhs_list.append(lhs_value)
+                    rhs_list.append(rhs_value)
                 diff_list.append(
                     (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
 
     diff_list.sort(key=lambda x: x[4]/x[3], reverse=True)
-    if len(diff_list) > limit:
-        diff_list = diff_list[:limit]
+    if len(diff_list) > limit*2:
+        first = diff_list[:limit]
+        last = diff_list[-limit:]
+        diff_list = first
+        diff_list.extend(last)
+
     for name, lhs_hash, rhs_hash, lhs_size, rhs_size in diff_list:
         report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
             strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
         if copy_binaries:
             copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
             copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+
+    if len(lhs_list) > 0:
+        gmean_lhs = statistics.geometric_mean(lhs_list)
+        gmean_rhs = statistics.geometric_mean(rhs_list)
+        report.write("|GeoMeans|N/A|N/A|{:.3f}|{:.3f}|{:.3f}|\n".format(
+                     gmean_lhs, gmean_rhs, gmean_rhs/gmean_lhs))
 
 
 lhs_data = parse(lhs)
@@ -91,7 +107,7 @@ if 'PRE_COMMIT_MODE' in os.environ:
     pr_comment_path = base_dir+"/artifacts/pr-comment_generated.md"
     with open(pr_comment_path, "w") as pr_comment:
         pr_comment.write('## Metadata\n')
-        pr_comment.write('+ workflow url: {}\n'.format(workflow_url))
+        pr_comment.write('+ Workflow URL: {}\n'.format(workflow_url))
         pr_comment.write(
             '+ LLVM revision: {}\n'.format(os.environ['LLVM_REVISION']))
         pr_comment.write(
@@ -125,7 +141,7 @@ else:
             issue_report.write('labels: regression\n')
             issue_report.write('---\n')
             issue_report.write('## Metadata\n')
-            issue_report.write('+ workflow url: {}\n'.format(workflow_url))
+            issue_report.write('+ Workflow URL: {}\n'.format(workflow_url))
 
             dump_pretty_change_logs(issue_report, change_logs_path)
 
