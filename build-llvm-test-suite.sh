@@ -15,7 +15,8 @@ then
   mkdir llvm-test-suite-build-tmp
   cd llvm-test-suite-build-tmp
   # For LTO: -mllvm -lto-embed-bitcode=optimized
-  embed_bitcode="-fembed-bitcode "
+  embed_bitcode="-mllvm -lto-embed-bitcode=optimized"
+  #embed_bitcode="-fembed-bitcode "
   reproducible_build="-Qn -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= "
   flags="-fuse-ld=lld -mcpu=sifive-u74 -Wno-unused-command-line-argument $embed_bitcode $reproducible_build $PATCH_ADDITIONAL_FLAGS"
   export CLANG_PATH=$PWD/../llvm-build/bin
