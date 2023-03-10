@@ -6,6 +6,7 @@ import shutil
 import html
 import datetime
 import statistics
+import binutils
 
 lhs = sys.argv[1]
 rhs = sys.argv[2]
@@ -13,6 +14,7 @@ base_dir = sys.argv[3]
 workflow_url = sys.argv[4]
 binaries_src = base_dir+"/binaries/"
 binaries_dst = base_dir+"/artifacts/binaries/"
+llvm_path = base_dir+"/llvm-build/bin/"
 os.makedirs(binaries_dst)
 
 threshold_abs = 16
@@ -37,6 +39,9 @@ def parse(path):
 def copy_binary(lhs, rhs):
     if os.path.exists(lhs):
         shutil.copyfile(lhs, rhs)
+        binutils.dump_asm(rhs, llvm_path+"llvm-objdump")
+        binutils.extract_bc(rhs, llvm_path+"llvm-objcopy",
+                            llvm_path+"llvm-dis")
 
 
 def dump_pretty_change_logs(report, change_logs_path):
@@ -58,7 +63,7 @@ def strip_name(name: str):
         'test-suite :: ').removesuffix('.test')
 
 
-def dump_diff(report, lhs_data, rhs_data, copy_binaries):
+def dump_diff(report, lhs_data, rhs_data):
     report.write('## Differences\n')
     report.write(
         '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
@@ -89,9 +94,8 @@ def dump_diff(report, lhs_data, rhs_data, copy_binaries):
     for name, lhs_hash, rhs_hash, lhs_size, rhs_size in diff_list:
         report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
             strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
-        if copy_binaries:
-            copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
-            copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+        copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
+        copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
 
     if len(lhs_list) > 0:
         gmean_lhs = statistics.geometric_mean(lhs_list)
@@ -115,7 +119,7 @@ if 'PRE_COMMIT_MODE' in os.environ:
         pr_comment.write(
             '+ Patch SHA256: {}\n'.format(os.environ['PATCH_SHA256']))
 
-        dump_diff(pr_comment, lhs_data, rhs_data, True)
+        dump_diff(pr_comment, lhs_data, rhs_data)
 else:
     binary_bloating_list = []
     for name in lhs_data.keys():
@@ -127,39 +131,36 @@ else:
                 binary_bloating_list.append(
                     (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
 
+    change_logs_path = base_dir+"/artifacts/CHANGELOGS"
+    issue_report_path = base_dir+"/artifacts/issue_generated.md"
+    with open(issue_report_path, "w") as issue_report:
+        issue_report.write('---\n')
+        issue_report.write(
+            "title: Size Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
+        issue_report.write('labels: regression\n')
+        issue_report.write('---\n')
+        issue_report.write('## Metadata\n')
+        issue_report.write('+ Workflow URL: {}\n'.format(workflow_url))
+
+        dump_pretty_change_logs(issue_report, change_logs_path)
+
+        issue_report.write('## Regressions\n')
+        issue_report.write(
+            '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
+        issue_report.write('|:--|:--:|:--:|--:|--:|--:|\n')
+
+        binary_bloating_list.sort(key=lambda x: x[4]/x[3], reverse=True)
+        if len(binary_bloating_list) > limit:
+            binary_bloating_list = binary_bloating_list[:limit]
+
+        for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
+            issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(strip_name(name), lhs_hash,
+                                                                  rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
+
+        dump_diff(issue_report, lhs_data, rhs_data)
+
     if len(binary_bloating_list) == 0:
         print("No regressions")
         exit(0)
-
     else:
-        change_logs_path = base_dir+"/artifacts/CHANGELOGS"
-        issue_report_path = base_dir+"/artifacts/issue_generated.md"
-        with open(issue_report_path, "w") as issue_report:
-            issue_report.write('---\n')
-            issue_report.write(
-                "title: Size Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
-            issue_report.write('labels: regression\n')
-            issue_report.write('---\n')
-            issue_report.write('## Metadata\n')
-            issue_report.write('+ Workflow URL: {}\n'.format(workflow_url))
-
-            dump_pretty_change_logs(issue_report, change_logs_path)
-
-            issue_report.write('## Regressions\n')
-            issue_report.write(
-                '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
-            issue_report.write('|:--|:--:|:--:|--:|--:|--:|\n')
-
-            binary_bloating_list.sort(key=lambda x: x[4]/x[3], reverse=True)
-            if len(binary_bloating_list) > limit:
-                binary_bloating_list = binary_bloating_list[:limit]
-
-            for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
-                issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(strip_name(name), lhs_hash,
-                                                                      rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
-                copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
-                copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
-
-            dump_diff(issue_report, lhs_data, rhs_data, False)
-
         exit(1)
