@@ -39,9 +39,9 @@ def parse(path):
 def copy_binary(lhs, rhs):
     if os.path.exists(lhs):
         shutil.copyfile(lhs, rhs)
-        binutils.dump_asm(rhs, llvm_path+"llvm-objdump")
-        binutils.extract_bc(rhs, llvm_path+"llvm-objcopy",
-                            llvm_path+"llvm-dis")
+        binutils.dump_asm(rhs, os.path.abspath(llvm_path+"llvm-objdump"))
+        binutils.extract_bc(rhs, os.path.abspath(llvm_path+"llvm-objcopy"),
+                            os.path.abspath(llvm_path+"llvm-dis"))
 
 
 def dump_pretty_change_logs(report, change_logs_path):

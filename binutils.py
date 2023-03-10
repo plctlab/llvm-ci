@@ -56,7 +56,7 @@ if __name__ == '__main__':
         print('Usage: binutils.py <llvm-bin-path> binaries...')
         exit(1)
 
-    llvm_path = sys.argv[1].removesuffix('/')
+    llvm_path = os.path.abspath(sys.argv[1]).removesuffix('/')
     llvm_dis = llvm_path + '/llvm-dis'
     llvm_objdump = llvm_path+"/llvm-objdump"
     llvm_objcopy = llvm_path+"/llvm-objcopy"
