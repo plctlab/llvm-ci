@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 shopt -s inherit_errexit
 
 repo_base=$1
