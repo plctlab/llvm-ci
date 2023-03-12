@@ -12,12 +12,10 @@ git -C ./llvm-project clean -fdx
 
 source $repo_base/setup-pre-commit-patch.sh
 rm -f patch
-if [ $PATCH_ID ]
-then
-  PATCH_URL=https://reviews.llvm.org/$PATCH_ID?download=true
-elif [ $GITHUB_PATCH_ID ]
-then
-  PATCH_URL=https://github.com/$GITHUB_PATCH_ID.patch
+if [ -n "${PATCH_ID}" ]; then
+  PATCH_URL=https://reviews.llvm.org/${PATCH_ID}?download=true
+elif [ -n "${GITHUB_PATCH_ID}" ]; then
+  PATCH_URL=https://github.com/${GITHUB_PATCH_ID}.patch
 else
   echo "Please set PATCH_ID or GITHUB_PATCH_ID"
   exit 1
