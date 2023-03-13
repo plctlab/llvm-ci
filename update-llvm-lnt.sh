@@ -12,3 +12,6 @@ else
   git clone https://github.com/dtcxzyw/llvm-lnt
   cd llvm-lnt
 fi
+
+pip3 install -r requirements.client.txt
+echo $(which lnt)

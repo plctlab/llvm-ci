@@ -37,7 +37,7 @@ jobs:
         run: ${{ github.workspace }}/update-llvm-test-suite.sh ${{ github.workspace }}/llvm-test-suite.patch
         working-directory: ${{ vars.BASE_DIR }}
 
-      - name: Update llvm-test-suite
+      - name: Update llvm-lnt
         run: ${{ github.workspace }}/update-llvm-lnt.sh
         working-directory: ${{ vars.BASE_DIR }}
 
