@@ -49,8 +49,8 @@ if [ -r artifacts/result.json ]
 then
 
   lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
-  mv result.json artifacts/result-lit.json
-  
+  mv report.json artifacts/lnt-report.json
+
   if [ -r result-last.json ]
   then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
