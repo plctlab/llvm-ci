@@ -13,5 +13,7 @@ else
   cd llvm-lnt
 fi
 
+export PATH=$PATH:~/.local/bin
 pip3 install -r requirements.client.txt
+echo "PATH=$PATH" >> $GITHUB_ENV
 echo $(which lnt)

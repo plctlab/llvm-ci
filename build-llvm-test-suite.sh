@@ -2,6 +2,7 @@
 
 repo_base=$1
 run_url=$2
+run_id=$3
 toolchain=$repo_base/target-riscv64.cmake
 update_script=$repo_base/update-binary-database.py
 report_script=$repo_base/report-generate.py
@@ -46,6 +47,10 @@ fi
 
 if [ -r artifacts/result.json ]
 then
+
+  lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
+  mv result.json artifacts/result-lit.json
+  
   if [ -r result-last.json ]
   then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff

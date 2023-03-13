@@ -47,7 +47,7 @@ jobs:
 
       - name: Build LLVM Test Suite
         id: test
-        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} ${{ github.run_id }}
         working-directory: ${{ vars.BASE_DIR }}
         
       - name: Report
