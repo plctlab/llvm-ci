@@ -10,6 +10,7 @@ then
   git pull
 else
   git clone https://github.com/llvm/llvm-test-suite
+  cd llvm-test-suite
 fi
 
 git apply $1
