@@ -29,6 +29,7 @@ then
         -DTEST_SUITE_BENCHMARKING_ONLY=ON \
         -DBENCHMARK_ENABLE_TESTING=ON \
         -DTEST_SUITE_RUN_BENCHMARKS=OFF \
+        -DTEST_SUITE_COLLECT_STATS=ON \
         -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
   cmake --build . -j
