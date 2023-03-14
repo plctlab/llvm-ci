@@ -6,6 +6,7 @@ run_id=$3
 toolchain=$repo_base/target-riscv64.cmake
 update_script=$repo_base/update-binary-database.py
 report_script=$repo_base/report-generate.py
+metadata_script=$repo_base/embed-lnt-metadata.py
 
 if [ $MODIFIED = 1 ] || [ ! -r result-last.json ] || [ ! -z $FORCE_REBUILD ]
 then
@@ -51,6 +52,7 @@ then
   lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
   if [ -r report.json ]
   then
+    $metadata_script report.json $(git -C ./llvm-project rev-parse HEAD) $run_url
     # submit the report to https://lnt.rvperf.org
     scp report.json plct_lnt_server:/lnt_work
     ssh plct_lnt_server "/lnt_work/submit.sh"
