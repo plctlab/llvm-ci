@@ -11,7 +11,7 @@ with open(data_file) as f:
     data = json.load(f)
 
 info = data['Run']['Info']
-info['llvm_project_revision'] = revision
+info['llvm_revision'] = revision
 info['workflow_url'] = url
 
 with open(data_file, 'w') as f:
