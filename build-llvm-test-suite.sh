@@ -51,7 +51,9 @@ then
   lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
   if [ -r report.json ]
   then
-    # TODO: submit the report to https://lnt.rvperf.org
+    # submit the report to https://lnt.rvperf.org
+    scp report.json plct_lnt_server:/lnt_work
+    ssh plct_lnt_server "/lnt_work/submit.sh"
     mv report.json artifacts/lnt-report.json
   fi
 
