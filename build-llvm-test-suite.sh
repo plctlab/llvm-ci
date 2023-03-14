@@ -20,7 +20,7 @@ then
   #embed_bitcode="-fembed-bitcode "
   reproducible_build="-Qn -Wno-builtin-macro-redefined -D__DATE__= -D__TIME__= -D__TIMESTAMP__= "
   flags="-flto=thin -fuse-ld=lld -mcpu=sifive-u74 -Wno-unused-command-line-argument $embed_bitcode $reproducible_build $PATCH_ADDITIONAL_FLAGS"
-  export CLANG_PATH=$PWD/../llvm-build/bin
+  export LLVM_BIN_PATH=$PWD/../llvm-build/bin
   cmake -G Ninja \
         -DCMAKE_C_FLAGS="$flags" \
         -DCMAKE_CXX_FLAGS="$flags" \
@@ -49,7 +49,11 @@ if [ -r artifacts/result.json ]
 then
 
   lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
-  mv report.json artifacts/lnt-report.json
+  if [ -r report.json ]
+  then
+    # TODO: submit the report to https://lnt.rvperf.org
+    mv report.json artifacts/lnt-report.json
+  fi
 
   if [ -r result-last.json ]
   then
