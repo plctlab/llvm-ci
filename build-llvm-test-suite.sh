@@ -28,14 +28,16 @@ then
         -DOPTFLAGS="$flags" \
         -DCMAKE_TOOLCHAIN_FILE=$toolchain \
         -C ../llvm-test-suite/cmake/caches/ReleaseThinLTO.cmake \
+        -DTEST_SUITE_RUN_UNDER="$(pwd)/../../qemu.sh " \
+        -DTEST_SUITE_USER_MODE_EMULATION=ON \
         -DTEST_SUITE_BENCHMARKING_ONLY=ON \
         -DBENCHMARK_ENABLE_TESTING=ON \
-        -DTEST_SUITE_RUN_BENCHMARKS=OFF \
+        -DTEST_SUITE_RUN_BENCHMARKS=ON \
         -DTEST_SUITE_COLLECT_STATS=ON \
         -DTEST_SUITE_COLLECT_COMPILE_TIME=OFF \
         ../llvm-test-suite
   cmake --build . -j
-  ../llvm-build/bin/llvm-lit -j1 -o ../artifacts/result.json . > /dev/null
+  ../llvm-build/bin/llvm-lit -j $(nproc) -o ../artifacts/result.json . > /dev/null
   if [ -z $PRE_COMMIT_MODE ]
   then
     $update_script . ../binaries
