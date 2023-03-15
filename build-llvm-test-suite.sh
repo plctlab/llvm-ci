@@ -52,9 +52,6 @@ if [ -r artifacts/result.json ]
 then
   if [ -r result-last.json ]
   then
-    llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
-    # small diff
-    llvm-test-suite/utils/compare.py --metric=size --filter-hash result-last.json vs artifacts/result.json
     $report_script result-last.json artifacts/result.json . $run_url
     echo "SHOULD_OPEN_ISSUE=$?" >> $GITHUB_OUTPUT
     if [ -d artifacts/binaries ]

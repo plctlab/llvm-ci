@@ -17,25 +17,46 @@ binaries_dst = base_dir+"/artifacts/binaries/"
 llvm_path = base_dir+"/llvm-build/bin/"
 os.makedirs(binaries_dst)
 
-threshold_abs = 16
-threshold_rel = 1.001
 limit = 20
 
 
-def parse(path):
-    res = dict()
+def strip_subtest(name: str):
+    pos = name.find('.test:')
+    if pos == -1:
+        return name
+    return name[:pos+5]
+
+
+def parse_result(path):
+    res_binary = dict()
+    res_time = dict()
     with open(path, "r", encoding='utf-8') as f:
         data = json.load(f)
         tests = data['tests']
         for test in tests:
             name = test['name']
             metrics = test['metrics']
+            if test['code'] != 'PASS':
+                continue
             if 'size' not in metrics:
                 continue
             size = metrics['size..text']
             if size > 0:
-                res[name] = (metrics['hash'], size)
-    return res
+                res_binary[name] = (metrics['hash'], size)
+        for test in tests:
+            name = test['name']
+            metrics = test['metrics']
+            if test['code'] != 'PASS':
+                continue
+            if 'exec_time' not in metrics:
+                continue
+            hash_value = None
+            if 'hash' in metrics:
+                hash_value = metrics['hash']
+            else:
+                hash_value = res_binary[strip_subtest(name)]
+            res_time[name] = (hash_value, metrics['exec_time'])
+    return res_binary, res_time
 
 
 def copy_binary(lhs, rhs):
@@ -65,10 +86,10 @@ def strip_name(name: str):
         'test-suite :: ').removesuffix('.test')
 
 
-def dump_diff(report, lhs_data, rhs_data):
-    report.write('## Differences\n')
+def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: list):
+    report.write('## Differences ({})\n'.format(metric))
     report.write(
-        '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
+        '|Name|Baseline MD5|Current MD5|Baseline {}|Current {}|Ratio|\n'.format(metric, metric))
     report.write('|:--|:--:|:--:|--:|--:|--:|\n')
 
     diff_list = []
@@ -93,13 +114,10 @@ def dump_diff(report, lhs_data, rhs_data):
         diff_list = first
         diff_list.extend(last)
 
-    for name, lhs_hash, rhs_hash, lhs_size, rhs_size in diff_list:
+    for name, lhs_hash, rhs_hash, lhs_value, rhs_value in diff_list:
         report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
-            strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
-        copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
-        copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
-        binutils.diff_ir(binaries_dst+'irdiff-{}-{}'.format(lhs_hash, rhs_hash), binaries_dst +
-                         lhs_hash, binaries_dst+rhs_hash, os.path.abspath(llvm_path+"llvm-diff"))
+            strip_name(name), lhs_hash, rhs_hash, lhs_value, rhs_value, rhs_value/lhs_value))
+        compare_pairs.append((lhs_hash, rhs_hash))
 
     if len(lhs_list) > 0:
         gmean_lhs = statistics.geometric_mean(lhs_list)
@@ -108,8 +126,49 @@ def dump_diff(report, lhs_data, rhs_data):
                      gmean_lhs, gmean_rhs, gmean_rhs/gmean_lhs))
 
 
-lhs_data = parse(lhs)
-rhs_data = parse(rhs)
+def compare_binary(compare_pairs):
+    for lhs_hash, rhs_hash in compare_pairs:
+        copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
+        copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+        binutils.diff_ir(binaries_dst+'irdiff-{}-{}'.format(lhs_hash, rhs_hash), binaries_dst +
+                         lhs_hash, binaries_dst+rhs_hash, os.path.abspath(llvm_path+"llvm-diff"))
+
+
+def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshold_abs):
+    regressions = []
+    for name in lhs_data.keys():
+        if name in rhs_data:
+            lhs_hash, lhs_value = lhs_data[name]
+            rhs_hash, rhs_value = rhs_data[name]
+
+            if lhs_hash == rhs_hash:
+                continue
+
+            if lhs_value * threshold_rel < rhs_value or lhs_value + threshold_abs < rhs_value:
+                regressions.append(
+                    (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
+
+    if len(regressions) == 0:
+        return False
+
+    report.write('## Regressions ({})\n'.format(metric))
+    report.write(
+        '|Name|Baseline MD5|Current MD5|Baseline {}|Current {}|Ratio|\n'.format(metric))
+    report.write('|:--|:--:|:--:|--:|--:|--:|\n')
+
+    regressions.sort(key=lambda x: x[4]/x[3], reverse=True)
+    if len(regressions) > limit:
+        regressions = regressions[:limit]
+
+    for name, lhs_hash, rhs_hash, lhs_value, rhs_value in regressions:
+        report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(strip_name(name), lhs_hash,
+                                                        rhs_hash, lhs_value, rhs_value, rhs_value/lhs_value))
+    return True
+
+
+lhs_bin, lhs_time = parse_result(lhs)
+rhs_bin, rhs_time = parse_result(rhs)
+compare_pairs = []
 
 if 'PRE_COMMIT_MODE' in os.environ:
     pr_comment_path = base_dir+"/artifacts/pr-comment_generated.md"
@@ -123,24 +182,15 @@ if 'PRE_COMMIT_MODE' in os.environ:
         pr_comment.write(
             '+ Patch SHA256: {}\n'.format(os.environ['PATCH_SHA256']))
 
-        dump_diff(pr_comment, lhs_data, rhs_data)
+        dump_diff(pr_comment, lhs_bin, rhs_bin, 'Size', compare_pairs)
+        dump_diff(pr_comment, lhs_time, rhs_time, 'Time', compare_pairs)
 else:
-    binary_bloating_list = []
-    for name in lhs_data.keys():
-        if name in rhs_data:
-            lhs_hash, lhs_value = lhs_data[name]
-            rhs_hash, rhs_value = rhs_data[name]
-
-            if lhs_value * threshold_rel < rhs_value or lhs_value + threshold_abs < rhs_value:
-                binary_bloating_list.append(
-                    (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
-
     change_logs_path = base_dir+"/artifacts/CHANGELOGS"
     issue_report_path = base_dir+"/artifacts/issue_generated.md"
     with open(issue_report_path, "w") as issue_report:
         issue_report.write('---\n')
         issue_report.write(
-            "title: Size Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
+            "title: Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
         issue_report.write('labels: regression\n')
         issue_report.write('---\n')
         issue_report.write('## Metadata\n')
@@ -148,23 +198,16 @@ else:
 
         dump_pretty_change_logs(issue_report, change_logs_path)
 
-        issue_report.write('## Regressions\n')
-        issue_report.write(
-            '|Name|Baseline MD5|Current MD5|Baseline Size|Current Size|Ratio|\n')
-        issue_report.write('|:--|:--:|:--:|--:|--:|--:|\n')
+        r1 = dump_regressions(issue_report, lhs_bin,
+                              rhs_bin, 'Size', 1.001, 16)
+        r2 = dump_regressions(issue_report, lhs_time, rhs_time,
+                              'Time', 1.001, 1e-6)  # ~1000 instructions
 
-        binary_bloating_list.sort(key=lambda x: x[4]/x[3], reverse=True)
-        if len(binary_bloating_list) > limit:
-            binary_bloating_list = binary_bloating_list[:limit]
+        dump_diff(issue_report, lhs_bin, rhs_bin, 'Size', compare_pairs)
+        dump_diff(issue_report, lhs_bin, rhs_bin, 'Time', compare_pairs)
 
-        for name, lhs_hash, rhs_hash, lhs_size, rhs_size in binary_bloating_list:
-            issue_report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(strip_name(name), lhs_hash,
-                                                                  rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
-
-        dump_diff(issue_report, lhs_data, rhs_data)
-
-    if len(binary_bloating_list) == 0:
+    if r1 or r2:
+        exit(1)
+    else:
         print("No regressions")
         exit(0)
-    else:
-        exit(1)
