@@ -48,17 +48,6 @@ fi
 
 if [ -r artifacts/result.json ]
 then
-
-  lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
-  if [ -r report.json ]
-  then
-    $metadata_script report.json $(git -C ./llvm-project rev-parse HEAD) $run_url
-    # submit the report to https://lnt.rvperf.org
-    scp report.json plct_lnt_server:/lnt_work
-    ssh plct_lnt_server "/lnt_work/submit.sh"
-    mv report.json artifacts/lnt-report.json
-  fi
-
   if [ -r result-last.json ]
   then
     llvm-test-suite/utils/compare.py --all --metric=size --filter-hash result-last.json vs artifacts/result.json > artifacts/diff
@@ -74,6 +63,17 @@ then
   fi
   if [ -z $PRE_COMMIT_MODE ]
   then
+    
+    lnt runtest test_suite --import-lit artifacts/result.json --run-order=$run_id
+    if [ -r report.json ]
+    then
+      $metadata_script report.json $(git -C ./llvm-project rev-parse HEAD) $run_url
+      # submit the report to https://lnt.rvperf.org
+      scp report.json plct_lnt_server:/lnt_work
+      ssh plct_lnt_server "/lnt_work/submit.sh"
+      mv report.json artifacts/lnt-report.json
+    fi
+
     cp artifacts/result.json result-last.json
   fi
 fi

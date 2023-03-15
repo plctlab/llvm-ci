@@ -9,8 +9,6 @@ then
   git clean -fdx
   git pull
 else
-  git clone https://github.com/llvm/llvm-test-suite
+  git clone https://github.com/dtcxzyw/llvm-test-suite
   cd llvm-test-suite
 fi
-
-git apply $1

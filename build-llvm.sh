@@ -11,7 +11,8 @@ cmake ../llvm-project/llvm -DCMAKE_BUILD_TYPE=Release -G Ninja \
 cmake --build . -j
 if [ $MODIFIED = 1 ]
 then
-  cmake --build . -j -t check-all
+  cmake --build . -j -t check-llvm-unit
+  cmake --build . -j -t check-llvm
 else
   echo "Skip llvm tests"
 fi

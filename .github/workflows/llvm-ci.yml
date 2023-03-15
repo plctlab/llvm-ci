@@ -34,7 +34,7 @@ jobs:
         run: echo "FORCE_REBUILD=1" >> $GITHUB_ENV
 
       - name: Update llvm-test-suite
-        run: ${{ github.workspace }}/update-llvm-test-suite.sh ${{ github.workspace }}/llvm-test-suite.patch
+        run: ${{ github.workspace }}/update-llvm-test-suite.sh
         working-directory: ${{ vars.BASE_DIR }}
 
       - name: Update llvm-lnt
