@@ -30,6 +30,8 @@ def parse(path):
         for test in tests:
             name = test['name']
             metrics = test['metrics']
+            if 'size' not in metrics:
+                continue
             size = metrics['size..text']
             if size > 0:
                 res[name] = (metrics['hash'], size)
@@ -96,6 +98,8 @@ def dump_diff(report, lhs_data, rhs_data):
             strip_name(name), lhs_hash, rhs_hash, lhs_size, rhs_size, rhs_size/lhs_size))
         copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
         copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
+        binutils.diff_ir(binaries_dst+'irdiff-{}-{}'.format(lhs_hash, rhs_hash), binaries_dst +
+                         lhs_hash, binaries_dst+rhs_hash, os.path.abspath(llvm_path+"llvm-diff"))
 
     if len(lhs_list) > 0:
         gmean_lhs = statistics.geometric_mean(lhs_list)
