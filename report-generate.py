@@ -204,7 +204,7 @@ else:
                               'Time', 1.001, 1e-6)  # ~1000 instructions
 
         dump_diff(issue_report, lhs_bin, rhs_bin, 'Size', compare_pairs)
-        dump_diff(issue_report, lhs_bin, rhs_bin, 'Time', compare_pairs)
+        dump_diff(issue_report, lhs_time, rhs_time, 'Time', compare_pairs)
 
     if r1 or r2:
         exit(1)
