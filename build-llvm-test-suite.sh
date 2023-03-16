@@ -74,6 +74,7 @@ then
     fi
 
     cp artifacts/result.json result-last.json
+    git -C ./llvm-project rev-parse HEAD > llvm_revision
   fi
 fi
 
