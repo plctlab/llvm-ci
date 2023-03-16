@@ -2,6 +2,9 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
+repo_base=$1
+git -C ./llvm-project apply $repo_base/llvm.patch
+
 mkdir -p llvm-build
 cd llvm-build
 cmake ../llvm-project/llvm -DCMAKE_BUILD_TYPE=Release -G Ninja \

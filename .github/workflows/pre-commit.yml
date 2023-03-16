@@ -32,7 +32,7 @@ jobs:
         working-directory: ${{ env.BASE_DIR }}
 
       - name: Build LLVM
-        run: ${{ github.workspace }}/build-llvm.sh
+        run: ${{ github.workspace }}/build-llvm.sh ${{ github.workspace }}
         working-directory: ${{ env.BASE_DIR }}
 
       - name: Build LLVM Test Suite
