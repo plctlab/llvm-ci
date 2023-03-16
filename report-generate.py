@@ -153,7 +153,7 @@ def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshol
 
     report.write('## Regressions ({})\n'.format(metric))
     report.write(
-        '|Name|Baseline MD5|Current MD5|Baseline {}|Current {}|Ratio|\n'.format(metric))
+        '|Name|Baseline MD5|Current MD5|Baseline {}|Current {}|Ratio|\n'.format(metric, metric))
     report.write('|:--|:--:|:--:|--:|--:|--:|\n')
 
     regressions.sort(key=lambda x: x[4]/x[3], reverse=True)
