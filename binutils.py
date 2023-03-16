@@ -25,7 +25,7 @@ def diff_ir(out_dir, base1, base2, llvm_diff):
     os.makedirs(out_dir, exist_ok=True)
     diff_file = out_dir+"/diff"
     with open(diff_file, 'w') as diff:
-        subprocess.run(['diff', '-x', '"*.bc"', '-q',
+        subprocess.run(['diff', '-x', '*.bc', '-q',
                        '-r', base1, base2], stdout=diff)
 
     pattern = re.compile(r'Files (.+) and (.+) differ')
