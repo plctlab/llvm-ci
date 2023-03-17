@@ -1,13 +1,13 @@
 diff --git a/clang/lib/Driver/ToolChains/CommonArgs.cpp b/clang/lib/Driver/ToolChains/CommonArgs.cpp
-index bc32b8d8cac8..a00cbd1c6ae5 100644
+index 774a1843fa2c..d356daf80ca5 100644
 --- a/clang/lib/Driver/ToolChains/CommonArgs.cpp
 +++ b/clang/lib/Driver/ToolChains/CommonArgs.cpp
-@@ -1780,6 +1780,8 @@ SmallString<128> tools::getStatsFileName(const llvm::opt::ArgList &Args,
-   }
+@@ -1781,6 +1781,8 @@ SmallString<128> tools::getStatsFileName(const llvm::opt::ArgList &Args,
+     }
  
-   StringRef BaseName = llvm::sys::path::filename(Input.getBaseInput());
-+  if(BaseName.empty())
-+    BaseName = llvm::sys::path::filename(Output.getFilename());
-   llvm::sys::path::append(StatsFile, BaseName);
-   llvm::sys::path::replace_extension(StatsFile, "stats");
-   return StatsFile;
+     StringRef BaseName = llvm::sys::path::filename(Input.getBaseInput());
++    if (BaseName.empty())
++      BaseName = llvm::sys::path::filename(Output.getFilename());
+     llvm::sys::path::append(StatsFile, BaseName);
+     llvm::sys::path::replace_extension(StatsFile, "stats");
+   } else {
