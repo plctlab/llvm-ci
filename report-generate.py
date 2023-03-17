@@ -54,7 +54,7 @@ def parse_result(path):
             if 'hash' in metrics:
                 hash_value = metrics['hash']
             else:
-                hash_value = res_binary[strip_subtest(name)]
+                hash_value = res_binary[strip_subtest(name)][0]
             res_time[name] = (hash_value, metrics['exec_time'])
     return res_binary, res_time
 
@@ -144,7 +144,10 @@ def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshol
             if lhs_hash == rhs_hash:
                 continue
 
-            if lhs_value * threshold_rel < rhs_value or lhs_value + threshold_abs < rhs_value:
+            rel_regression = lhs_value * threshold_rel < rhs_value
+            abs_regression = lhs_value + threshold_abs < rhs_value
+
+            if rel_regression or (str(name).endswith(".test") and abs_regression):
                 regressions.append(
                     (name, lhs_hash, rhs_hash, lhs_value, rhs_value))
 
