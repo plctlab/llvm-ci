@@ -27,7 +27,9 @@ then
     echo "Modified"
     export MODIFIED=1
   fi
-  echo "MODIFIED=$MODIFIED" >> $GITHUB_ENV
 else
   git clone https://github.com/llvm/llvm-project
+  export MODIFIED=1
 fi
+
+echo "MODIFIED=$MODIFIED" >> $GITHUB_ENV
