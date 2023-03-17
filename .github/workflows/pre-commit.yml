@@ -50,6 +50,6 @@ jobs:
       - name: Archive artifacts
         uses: dtcxzyw/upload-artifact@main
         with:
-          name: artifacts
+          name: artifacts-${{ matrix.variant }}
           path: ${{ env.BASE_DIR }}/${{ matrix.variant }}/artifacts
           

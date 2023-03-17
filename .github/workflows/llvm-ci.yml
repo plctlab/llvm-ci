@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "main" ]
   schedule:
-  - cron: "0 */1 * * *"
+  - cron: "0 */2 * * *"
 
   workflow_dispatch:
 
@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto ]
+        variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto, rv64gcv-O3-thinlto, rv64gczxx-O3-thinlto ]
 
     runs-on: self-hosted
 
@@ -65,5 +65,5 @@ jobs:
       - name: Archive artifacts
         uses: dtcxzyw/upload-artifact@main
         with:
-          name: artifacts
+          name: artifacts-${{ matrix.variant }}
           path: ${{ vars.BASE_DIR }}/${{ matrix.variant }}/artifacts
