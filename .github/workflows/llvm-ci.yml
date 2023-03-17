@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        variant: [ rv64gc-O3-thinlto ]
+        variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto ]
 
     runs-on: self-hosted
 
