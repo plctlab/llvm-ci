@@ -9,11 +9,15 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: "unique"
+  group: ${{ matrix.variant }}
   cancel-in-progress: false
 
 jobs:
   build:
+    strategy:
+      matrix:
+        variant: [ rv64gc-O3-thinlto ]
+
     runs-on: self-hosted
 
     permissions:
@@ -23,11 +27,11 @@ jobs:
       - uses: dtcxzyw/checkout@main
 
       - name: Create work space
-        run: ./setup-work-space.sh ${{ vars.BASE_DIR }}
+        run: ./setup-work-space.sh ${{ vars.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Update LLVM
         run: ${{ github.workspace }}/update-llvm.sh
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}/${{ matrix.variant }}
         
       - name: Check force-rebuild flag
         if: github.event_name != 'schedule'
@@ -35,20 +39,20 @@ jobs:
 
       - name: Update llvm-test-suite
         run: ${{ github.workspace }}/update-llvm-test-suite.sh
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Update llvm-lnt
         run: ${{ github.workspace }}/update-llvm-lnt.sh
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Build LLVM
         run: ${{ github.workspace }}/build-llvm.sh ${{ github.workspace }}
-        working-directory: ${{ vars.BASE_DIR }}
+        working-directory: ${{ vars.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Build LLVM Test Suite
         id: test
-        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} ${{ github.run_id }}
-        working-directory: ${{ vars.BASE_DIR }}
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} ${{ github.run_id }} ${{ matrix.variant }}
+        working-directory: ${{ vars.BASE_DIR }}/${{ matrix.variant }}
         
       - name: Report
         uses: JasonEtco/create-an-issue@v2
@@ -62,4 +66,4 @@ jobs:
         uses: dtcxzyw/upload-artifact@main
         with:
           name: artifacts
-          path: ${{ vars.BASE_DIR }}/artifacts
+          path: ${{ vars.BASE_DIR }}/${{ matrix.variant }}/artifacts

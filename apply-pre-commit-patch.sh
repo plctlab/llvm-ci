@@ -24,6 +24,7 @@ fi
 echo "Downloading patch $PATCH_URL..."
 wget $PATCH_URL -O patch
 git -C ./llvm-project apply $PWD/patch
+echo "PATCH_URL=$PATCH_URL" >> $GITHUB_ENV
 echo "PATCH_SHA256=$(sha256sum patch)" >> $GITHUB_ENV
 echo "PATCH_ADDITIONAL_FLAGS=$PATCH_ADDITIONAL_FLAGS" >> $GITHUB_ENV
 echo "PRE_COMMIT_MODE=1" >> $GITHUB_ENV

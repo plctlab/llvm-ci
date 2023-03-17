@@ -12,6 +12,7 @@ lhs = sys.argv[1]
 rhs = sys.argv[2]
 base_dir = sys.argv[3]
 workflow_url = sys.argv[4]
+variant = sys.argv[5]
 binaries_src = base_dir+"/binaries/"
 binaries_dst = base_dir+"/artifacts/binaries/"
 llvm_path = base_dir+"/llvm-build/bin/"
@@ -86,7 +87,7 @@ def strip_name(name: str):
         'test-suite :: ').removesuffix('.test')
 
 
-def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: list):
+def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: set):
     report.write('## Differences ({})\n'.format(metric))
     report.write(
         '|Name|Baseline MD5|Current MD5|Baseline {}|Current {}|Ratio|\n'.format(metric, metric))
@@ -117,7 +118,7 @@ def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: list):
     for name, lhs_hash, rhs_hash, lhs_value, rhs_value in diff_list:
         report.write("|{}|{}|{}|{}|{}|{:.3f}|\n".format(
             strip_name(name), lhs_hash, rhs_hash, lhs_value, rhs_value, rhs_value/lhs_value))
-        compare_pairs.append((lhs_hash, rhs_hash))
+        compare_pairs.add((lhs_hash, rhs_hash))
 
     if len(lhs_list) > 0:
         gmean_lhs = statistics.geometric_mean(lhs_list)
@@ -126,7 +127,7 @@ def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: list):
                      gmean_lhs, gmean_rhs, gmean_rhs/gmean_lhs))
 
 
-def compare_binary(compare_pairs):
+def compare_binary(compare_pairs: set):
     for lhs_hash, rhs_hash in compare_pairs:
         copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
         copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
@@ -171,29 +172,33 @@ def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshol
 
 lhs_bin, lhs_time = parse_result(lhs)
 rhs_bin, rhs_time = parse_result(rhs)
-compare_pairs = []
+compare_pairs = set()
 
 if 'PRE_COMMIT_MODE' in os.environ:
     pr_comment_path = base_dir+"/artifacts/pr-comment_generated.md"
     with open(pr_comment_path, "w") as pr_comment:
         pr_comment.write('## Metadata\n')
         pr_comment.write('+ Workflow URL: {}\n'.format(workflow_url))
+        pr_comment.write('+ Variant: {}\n'.format(variant))
         pr_comment.write(
             '+ LLVM revision: {}\n'.format(os.environ['LLVM_REVISION']))
         pr_comment.write(
             '+ LLVM Test Suite revision: {}\n'.format(os.environ['LLVM_NTS_REVISION']))
         pr_comment.write(
+            '+ Patch URL: {}\n'.format(os.environ['PATCH_URL']))
+        pr_comment.write(
             '+ Patch SHA256: {}\n'.format(os.environ['PATCH_SHA256']))
 
         dump_diff(pr_comment, lhs_bin, rhs_bin, 'Size', compare_pairs)
         dump_diff(pr_comment, lhs_time, rhs_time, 'Time', compare_pairs)
+        compare_binary(compare_pairs)
 else:
     change_logs_path = base_dir+"/artifacts/CHANGELOGS"
     issue_report_path = base_dir+"/artifacts/issue_generated.md"
     with open(issue_report_path, "w") as issue_report:
         issue_report.write('---\n')
         issue_report.write(
-            "title: Regressions Report {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
+            "title: Regressions Report [{}] {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n".format(variant))
         issue_report.write('labels: regression\n')
         issue_report.write('---\n')
         issue_report.write('## Metadata\n')
@@ -208,6 +213,7 @@ else:
 
         dump_diff(issue_report, lhs_bin, rhs_bin, 'Size', compare_pairs)
         dump_diff(issue_report, lhs_time, rhs_time, 'Time', compare_pairs)
+        compare_binary(compare_pairs)
 
     if r1 or r2:
         exit(1)
