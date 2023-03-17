@@ -8,12 +8,12 @@ on:
 
   workflow_dispatch:
 
-concurrency:
-  group: ${{ matrix.variant }}
-  cancel-in-progress: false
-
 jobs:
   build:
+    concurrency:
+      group: ${{ matrix.variant }}
+      cancel-in-progress: false
+
     strategy:
       matrix:
         variant: [ rv64gc-O3-thinlto ]

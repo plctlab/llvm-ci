@@ -5,16 +5,16 @@ on:
     types: [opened, reopened]
   #issue_comment:
   #  types: [opened]
-
-concurrency:
-  group: ${{ matrix.variant }}
-  cancel-in-progress: false
   
 env:
   BASE_DIR: /home/dtcxzyw/llvm-ci/
 
 jobs:
   build:
+    concurrency:
+      group: ${{ matrix.variant }}
+      cancel-in-progress: false
+      
     strategy:
       matrix:
         variant: [ rv64gc-O3-thinlto ]
