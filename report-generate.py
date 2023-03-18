@@ -200,7 +200,7 @@ else:
     with open(issue_report_path, "w") as issue_report:
         issue_report.write('---\n')
         issue_report.write(
-            "title: Regressions Report [{}] {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n".format(variant))
+            "title: Regressions Report ["+variant+"] {{ date | date('MMMM Do YYYY, h:mm:ss a') }}\n")
         issue_report.write('labels: regression\n')
         issue_report.write('---\n')
         issue_report.write('## Metadata\n')
