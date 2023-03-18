@@ -35,6 +35,8 @@ def parse_result(path):
         data = json.load(f)
         tests = data['tests']
         for test in tests:
+            if 'name' not in test or 'metrics' not in test:
+                continue
             name = test['name']
             metrics = test['metrics']
             if test['code'] != 'PASS':
