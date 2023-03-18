@@ -7,9 +7,9 @@ then
   cd llvm-project
   git checkout .
   git clean -fdx
-  if [ -r llvm_revision ]
+  if [ -r ../llvm_revision ]
   then
-    last_commit=$(cat llvm_revision)
+    last_commit=$(cat ../llvm_revision)
   else
     last_commit=$(git rev-parse HEAD)
   fi
