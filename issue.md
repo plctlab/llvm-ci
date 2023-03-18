@@ -1,3 +1,3 @@
 ---
-title: Nightly Build Summary
+title: Internal CI Error
 ---
