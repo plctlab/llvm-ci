@@ -39,7 +39,7 @@ jobs:
         working-directory: ${{ env.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Build LLVM Test Suite
-        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} ${{ matrix.variant }}
+        run: ${{ github.workspace }}/build-llvm-test-suite.sh ${{ github.workspace }} ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} ${{ github.run_id }} ${{ matrix.variant }}
         working-directory: ${{ env.BASE_DIR }}/${{ matrix.variant }}
 
       - name: Report
