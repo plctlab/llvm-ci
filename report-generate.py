@@ -134,7 +134,7 @@ def compare_binary(compare_pairs: set):
         copy_binary(binaries_src+lhs_hash, binaries_dst+lhs_hash)
         copy_binary(binaries_src+rhs_hash, binaries_dst+rhs_hash)
         binutils.diff_ir(binaries_dst+'irdiff-{}-{}'.format(lhs_hash, rhs_hash), binaries_dst +
-                         lhs_hash, binaries_dst+rhs_hash, os.path.abspath(llvm_path+"llvm-diff"))
+                         lhs_hash+"_bc", binaries_dst+rhs_hash+"_bc", os.path.abspath(llvm_path+"llvm-diff"))
 
 
 def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshold_abs):
