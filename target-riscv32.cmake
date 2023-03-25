@@ -1,0 +1,11 @@
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR riscv32)
+
+set(CMAKE_C_COMPILER $ENV{LLVM_BIN_PATH}/clang)
+set(CMAKE_CXX_COMPILER $ENV{LLVM_BIN_PATH}/clang++)
+set(CMAKE_STRIP $ENV{LLVM_BIN_PATH}/llvm-strip)
+
+set(triple riscv32-linux-gnu)
+
+set(CMAKE_C_COMPILER_TARGET ${triple})
+set(CMAKE_CXX_COMPILER_TARGET ${triple})

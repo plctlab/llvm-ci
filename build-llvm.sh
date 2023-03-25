@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 shopt -s inherit_errexit
 
 repo_base=$1
@@ -12,7 +12,7 @@ cmake ../llvm-project/llvm -DCMAKE_BUILD_TYPE=Release -G Ninja \
         -DLLVM_ENABLE_PROJECTS="clang;lld" \
         -DLLVM_TARGETS_TO_BUILD="X86;RISCV" 
 cmake --build . -j
-if [ $MODIFIED = 1 ]
+if [ $MODIFIED = 1 ] && [ -z $PRE_COMMIT_MODE ]
 then
   cmake --build . -j -t check-llvm-unit
   cmake --build . -j -t check-llvm
