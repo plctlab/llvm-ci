@@ -5,6 +5,7 @@ run_url=$2
 run_id=$3
 variant=$4
 toolchain=$repo_base/target-riscv64.cmake
+emulator=qemu.sh
 update_script=$repo_base/update-binary-database.py
 report_script=$repo_base/report-generate.py
 metadata_script=$repo_base/embed-lnt-metadata.py
@@ -12,6 +13,11 @@ metadata_script=$repo_base/embed-lnt-metadata.py
 if [ -d llvm-test-suite-build-tmp ]
 then
   rm -rf llvm-test-suite-build-tmp
+fi
+if [[ $variant =~ "rv32" ]]
+then
+  toolchain=$repo_base/target-riscv32.cmake
+  emulator=qemu32.sh
 fi
 mkdir llvm-test-suite-build-tmp
 cd llvm-test-suite-build-tmp
@@ -28,7 +34,7 @@ cmake -G Ninja \
       -DOPTFLAGS="$flags" \
       -DCMAKE_TOOLCHAIN_FILE=$toolchain \
       -C $repo_base/variants/$variant.cmake \
-      -DTEST_SUITE_RUN_UNDER="$(pwd)/../../qemu.sh " \
+      -DTEST_SUITE_RUN_UNDER="$(pwd)/../../$emulator " \
       -DTEST_SUITE_USER_MODE_EMULATION=ON \
       -DTEST_SUITE_BENCHMARKING_ONLY=ON \
       -DBENCHMARK_ENABLE_TESTING=ON \

@@ -9,3 +9,5 @@ set(triple riscv32-linux-gnu)
 
 set(CMAKE_C_COMPILER_TARGET ${triple})
 set(CMAKE_CXX_COMPILER_TARGET ${triple})
+set(CMAKE_SYSROOT /usr/riscv32-linux-gnu/sysroot)
+set(OPTFLAGS "${OPTFLAGS} -L/usr/riscv32-linux-gnu/lib/gcc/riscv32-unknown-linux-gnu/12.2.0 -B/usr/riscv32-linux-gnu/lib/gcc/riscv32-unknown-linux-gnu/12.2.0")
