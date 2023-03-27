@@ -47,6 +47,8 @@ def parse_result(path):
             if size > 0:
                 res_binary[name] = (metrics['hash'], size)
         for test in tests:
+            if 'name' not in test or 'metrics' not in test:
+                continue
             name = test['name']
             metrics = test['metrics']
             if test['code'] != 'PASS':
