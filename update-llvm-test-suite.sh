@@ -7,7 +7,7 @@ then
   cd llvm-test-suite
   git checkout .
   git clean -fdx
-  git pull
+  #git pull
 else
   git clone https://github.com/dtcxzyw/llvm-test-suite
   cd llvm-test-suite
