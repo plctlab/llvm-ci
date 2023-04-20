@@ -102,7 +102,7 @@ def dump_diff(report, lhs_data, rhs_data, metric, compare_pairs: set):
     rhs_list = []
     for name in lhs_data.keys():
         if name in rhs_data:
-            if metric == 'Time' and str(name).startswith('MicroBenchmarks') and str(name).endswith(".test"):
+            if metric == 'Time' and str(name).startswith('test-suite :: MicroBenchmarks') and str(name).endswith(".test"):
                 continue
 
             lhs_hash, lhs_value = lhs_data[name]
@@ -152,7 +152,7 @@ def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshol
             if lhs_hash == rhs_hash:
                 continue
 
-            if metric == 'Time' and str(name).startswith('MicroBenchmarks') and str(name).endswith(".test"):
+            if metric == 'Time' and str(name).startswith('test-suite :: MicroBenchmarks') and str(name).endswith(".test"):
                 continue
 
             rel_regression = lhs_value * threshold_rel < rhs_value
