@@ -7,7 +7,7 @@ import re
 
 def dump_asm(filename: str, objdump):
     with open(filename+'.S', mode="w") as f:
-        subprocess.run([objdump, '--no-addresses',
+        subprocess.run([objdump, '--no-addresses', '--mattr=+v,+zba,+zbb,+zbc,+zbs',
                        '--symbolize-operands', '-S', filename], stdout=f)
 
 
