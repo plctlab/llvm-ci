@@ -18,7 +18,7 @@ jobs:
       matrix:
         variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto, rv64gczxx-O3-thinlto, rv32gc-O3-thinlto ]
 
-    runs-on: [ self-hosted, ${{ matrix.variant }} ]
+    runs-on: ${{ matrix.variant }}
 
     permissions:
       issues: write 
