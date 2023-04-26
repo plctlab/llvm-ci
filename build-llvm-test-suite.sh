@@ -44,10 +44,7 @@ cmake -G Ninja \
       ../llvm-test-suite
 cmake --build . -j
 ../llvm-build/bin/llvm-lit -j $(nproc) -o ../artifacts/result.json . >../artifacts/lit.log
-if [ -z $PRE_COMMIT_MODE ]
-then
-  $update_script . ../binaries
-fi
+$update_script . ../binaries
 cd ..
 
 if [ -r artifacts/result.json ]
