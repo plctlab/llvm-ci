@@ -16,6 +16,7 @@ if [ $MODIFIED = 1 ] && [ -z $PRE_COMMIT_MODE ]
 then
   #cmake --build . -j -t check-llvm-unit
   #cmake --build . -j -t check-llvm
+  echo "Skip llvm tests"
 else
   echo "Skip llvm tests"
 fi
