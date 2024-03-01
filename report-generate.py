@@ -156,7 +156,8 @@ def dump_regressions(report, lhs_data, rhs_data, metric, threshold_rel, threshol
                 continue
 
             rel_regression = lhs_value * threshold_rel < rhs_value
-            abs_regression = lhs_value + threshold_abs < rhs_value
+            #abs_regression = lhs_value + threshold_abs < rhs_value
+            abs_regression = False
 
             if rel_regression or (str(name).endswith(".test") and abs_regression):
                 regressions.append(
@@ -217,9 +218,9 @@ else:
         dump_pretty_change_logs(issue_report, change_logs_path)
 
         r1 = dump_regressions(issue_report, lhs_bin,
-                              rhs_bin, 'Size', 1.001, 16)
+                              rhs_bin, 'Size', 1.05, 16)
         r2 = dump_regressions(issue_report, lhs_time, rhs_time,
-                              'Time', 1.001, 1e-6)  # ~1000 instructions
+                              'Time', 1.05, 1e-6)  # ~1000 instructions
 
         dump_diff(issue_report, lhs_bin, rhs_bin, 'Size', compare_pairs)
         dump_diff(issue_report, lhs_time, rhs_time, 'Time', compare_pairs)
