@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto, rv64gczxx-O3-thinlto ]
+        variant: [ rv64gc-O3-thinlto, rv64gc-Os-thinlto, rv64gczxx-O3-thinlto, rv32gc-O3-thinlto ]
 
     runs-on: ${{ matrix.variant }}
 
